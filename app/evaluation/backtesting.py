@@ -99,11 +99,13 @@ class Backtester:
                 "Not enough data for backtesting. Reduce initial_train_frac or folds."
             )
 
-        # Build fold boundaries
+        # Build fold boundaries. `remaining` shrinks each round and also feeds
+        # the size guess, so the folds distribute across the available tail and
+        # no (tr_end, va_end) can overshoot the end of the series.
         fold_sizes = []
-        available = remaining
         for i in range(self.n_folds):
-            size = max(7, min(horizon or size_guess(available, self.n_folds - i, freq), remaining))
+            want = min(horizon or size_guess(remaining, self.n_folds - i, freq), remaining)
+            size = min(max(7, want), remaining)
             fold_sizes.append(size)
             remaining -= size
         fold_sizes = [s for s in fold_sizes if s > 0]
