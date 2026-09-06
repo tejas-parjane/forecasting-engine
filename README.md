@@ -192,6 +192,24 @@ docker-compose up --build
 # Dash:  http://127.0.0.1:8501
 ```
 
+### Deploy to Render (free tier)
+
+The [`render.yaml`](render.yaml) blueprint defines two public web services
+(the FastAPI backend and the Streamlit dashboard) from the repo's Dockerfile.
+
+1. Push this repo to GitHub.
+2. Go to <https://render.com/new> → **Blueprint** and connect this repo
+   (or: dashboard.render.com → **New** → **Blueprint** → paste the repo URL).
+3. Render builds the Docker image and creates both services.
+4. Each service gets a `*.onrender.com` URL.
+
+After 15 minutes idle the free instances sleep and wake automatically on the
+next request (first cold start can take ~1 min).
+
+The AI decision layer is **off by default** (`AI_ENABLED=false`) — the engine
+is fully functional without any API key. If you want it on, add
+`AI_ENABLED=true` and an `OPENAI_API_KEY` in the Render service dashboard.
+
 ---
 
 ## Data pipeline
@@ -393,6 +411,7 @@ forecasting-engine/
 ├── tests/              # data, features, models, evaluation, forecasting, API
 ├── Dockerfile
 ├── docker-compose.yml
+├── render.yaml         # Render blueprint: API + dashboard (free tier)
 ├── requirements.txt
 ├── .env.example
 └── README.md

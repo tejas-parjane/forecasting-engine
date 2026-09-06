@@ -1,0 +1,41 @@
+# Render Blueprint — one image, two web services.
+# Deploy at:  https://render.com/new  →  "Blueprint"  →  pick this repo
+# (or: dashboard.render.com → New → Blueprint → paste the repo URL)
+#
+# Both services build the repo Dockerfile; `dockerCommand` overrides the CMD
+# so each service runs exactly one process.
+
+services:
+  - type: web
+    name: forecasting-engine-api
+    runtime: docker
+    repo: https://github.com/tejas-parjane/forecasting-engine
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: AI_ENABLED
+        value: "false"
+      - key: PORT
+        value: "8000"
+
+  - type: web
+    name: forecasting-engine-dashboard
+    runtime: docker
+    repo: https://github.com/tejas-parjane/forecasting-engine
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: "streamlit run dashboard/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true"
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: AI_ENABLED
+        value: "false"
+      - key: PORT
+        value: "8501"
