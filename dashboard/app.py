@@ -22,8 +22,11 @@ import plotly.graph_objects as go
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+# Always prepend the repo root: a conditional insert is skipped when ROOT is
+# already on sys.path (e.g. via PYTHONPATH) yet positioned after the script
+# dir, which would resolve `import app` to this script (module `app`) instead
+# of the real app/ package, raising "'app' is not a package".
+sys.path.insert(0, str(ROOT))
 
 from app.config import settings  # noqa: E402
 from app.data.sample_data import generate_business_demand  # noqa: E402
