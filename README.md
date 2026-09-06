@@ -2,6 +2,8 @@
 
 > **Historical data → Forecast → Evaluate → Explain → Recommend**
 
+> ### Live demo: [tejas-parjane.github.io/forecasting-engine](https://tejas-parjane.github.io/forecasting-engine)
+
 A production-oriented, domain-agnostic forecasting system that takes messy
 temporal business data, builds statistically sound forecasting models,
 validates them with time-series backtesting, quantifies uncertainty, explains

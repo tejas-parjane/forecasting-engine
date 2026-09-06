@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ForecastEngine — AI-Powered Forecasting &amp; Decision Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0b0b0c;
+    --panel:#121212;
+    --panel-2:#191919;
+    --line:rgba(255,255,255,.1);
+    --line-strong:rgba(255,255,255,.16);
+    --text:rgba(255,255,255,.92);
+    --text-2:rgba(255,255,255,.6);
+    --text-3:rgba(255,255,255,.38);
+    --blue:#4d65ff; --blue-2:#6d7cff; --blue-strong:#3444da;
+    --grad:linear-gradient(90deg,#4f69d4,#a0b3ff);
+    --radius:16px;
+    --shadow:0 24px 70px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"Outfit",system-ui,sans-serif; background:var(--bg); color:var(--text);
+    line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;}
+  a{color:var(--blue-2); text-decoration:none;}
+  .wrap{max-width:1160px; margin:0 auto; padding:0 24px 70px;}
+
+  .topbar{display:flex; align-items:center; justify-content:space-between; padding:22px 0; border-bottom:1px solid var(--line);}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand .logo{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--blue-strong),var(--blue)); color:#fff; font-weight:700; font-size:16px;}
+  .brand .name{font-size:17px; font-weight:500; letter-spacing:-.2px; color:var(--text);}
+  .brand .name b{font-weight:600;}
+  .topnav{display:flex; gap:10px; align-items:center;}
+  .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:999px;
+    border:1px solid var(--line-strong); font-size:13px; font-weight:400; color:var(--text-2); background:var(--panel);}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--blue-2); box-shadow:0 0 0 4px rgba(109,124,255,.15); animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+  header{text-align:center; padding:84px 0 40px;}
+  .eyebrow{display:inline-block; padding:8px 16px; border-radius:999px; font-size:13px; font-weight:500; letter-spacing:.04em;
+    color:var(--blue-2); background:rgba(77,101,255,.08); border:1px solid rgba(109,124,255,.24);}
+  h1{font-size:clamp(40px,7vw,68px); font-weight:400; letter-spacing:-1.6px; line-height:1.02; margin:26px 0 20px;}
+  h1 strong{font-weight:500; background:linear-gradient(90deg,#7a87ff,#9aa6ff); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .tag{color:var(--text-2); font-size:clamp(17px,2vw,20px); max-width:720px; margin:0 auto 26px; font-weight:300;}
+  .tag b{color:#fff; font-weight:500;}
+  .loop{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; color:var(--text-3); font-size:13.5px; font-weight:400; margin-bottom:8px;}
+  .loop b{color:var(--text); font-weight:500;}
+  .loop .arr{color:var(--text-3); padding:0 4px;}
+
+  .cta{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; align-items:center; margin-top:24px;}
+  .btn-wrap{display:inline-block; position:relative; padding:1px; border-radius:13px;}
+  .btn-wrap .ring{position:absolute; inset:-1px; border-radius:13px; overflow:hidden; pointer-events:none;}
+  .btn-wrap .ring:before{content:""; position:absolute; top:-60%; left:-60%; width:220%; height:220%;
+    background:conic-gradient(from 0deg, #0039ff 0deg, rgba(255,255,255,0) 80deg, rgba(255,255,255,0) 300deg, #0039ff 360deg);
+    animation:spin 5s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .btn-wrap a{display:inline-flex; align-items:center; gap:10px; position:relative; z-index:1;
+    background:var(--panel); color:#fff; font-weight:500; font-size:15px; padding:16px 28px; border-radius:12px; transition:.15s;}
+  .btn-wrap a:hover{background:#1c1c1f;}
+  .btn-wrap.ghost .ring{display:none;}
+  .btn-wrap.ghost a{background:transparent; border:1px solid var(--line-strong); color:var(--text-2); font-weight:400; font-size:14px;}
+  .btn-wrap.ghost a:hover{border-color:var(--blue); color:#fff;}
+  .hero-note{margin-top:20px; color:var(--text-3); font-size:14px; font-weight:300;}
+  .hero-note b{color:var(--blue-2); font-weight:500;}
+
+  .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:14px; margin:40px 0;}
+  .kpi{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:24px 20px; box-shadow:var(--shadow); position:relative;}
+  .kpi .v{font-size:30px; font-weight:500; letter-spacing:-.6px; line-height:1;}
+  .kpi .l{color:var(--text-3); font-size:13px; margin-top:8px; font-weight:300;}
+  .kpi .v.s{color:#9ae3c0;} .kpi .v.w{color:#ffc46b;} .kpi .v.a{color:#aab4ff;}
+
+  h2{font-size:clamp(22px,3vw,30px); font-weight:400; letter-spacing:-.5px; margin:52px 0 8px;}
+  h2 strong{font-weight:500; color:#fff;}
+  .sub{color:var(--text-2); margin-bottom:22px; max-width:780px; font-weight:300;}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin:14px 0; box-shadow:var(--shadow);}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
+
+  .io{display:flex; align-items:flex-start; gap:16px; padding:14px 8px; border-bottom:1px solid var(--line);}
+  .io:last-child{border-bottom:0;}
+  .io .step{flex-shrink:0; width:36px; height:36px; border-radius:10px; background:var(--panel-2); border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; font-weight:500; color:var(--blue-2);}
+  .io b{display:block; font-size:17px; font-weight:500;}
+  .io p{color:var(--text-2); font-size:14px; margin-top:3px; font-weight:300;}
+  .io small{display:block; margin-top:5px; font-size:12px; color:var(--text-3); font-family:"JetBrains Mono",Consolas,monospace; font-weight:400;}
+
+  table{width:100%; border-collapse:collapse; font-size:14px;}
+  th,td{padding:11px 12px; text-align:left; border-bottom:1px solid var(--line); font-weight:300;}
+  th{color:var(--text-3); font-weight:500; font-size:12px; text-transform:uppercase; letter-spacing:.05em;}
+  td b{color:#aab4ff; font-weight:500;}
+  code{background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:2px 7px; font-family:"JetBrains Mono",monospace; font-size:13px; color:var(--text-2);}
+
+  .chart-box{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:14px; margin:14px 0; box-shadow:var(--shadow);}
+  .chart-box iframe{width:100%; height:340px; border:0; border-radius:10px; background:#fff;}
+  .chart-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(460px,1fr)); gap:16px;}
+  .chart-grid .chart-box{margin:0;}
+
+  .callout{background:linear-gradient(120deg,rgba(109,124,255,.14),transparent); border-left:3px solid var(--blue-2);
+    padding:18px 20px; border-radius:0 12px 12px 0; margin:18px 0; font-weight:300; color:var(--text-2);}
+  .callout b{color:#fff; font-weight:500;}
+
+  .muted-box{font-family:"JetBrains Mono",monospace; font-size:13px; color:#9fb0d8; line-height:1.9; white-space:pre; overflow-x:auto;}
+  .foot{text-align:center; color:var(--text-3); font-size:13px; padding:52px 0 0; font-weight:300;}
+  .foot a{color:var(--blue-2);}
+  @media(max-width:560px){ h1{font-size:40px;} .chart-grid{grid-template-columns:1fr;} .topnav{display:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand"><div class="logo">F</div><div class="name"><b>Forecast</b>Engine</div></div>
+    <div class="topnav">
+      <span class="pill"><span class="dot"></span>Real pipeline output below</span>
+      <span class="pill">Python · pandas · statsmodels · XGBoost · FastAPI · Streamlit</span>
+    </div>
+  </div>
+
+  <header>
+    <span class="eyebrow">Portfolio · Production-style ML data product</span>
+    <h1>Turn a time series into a decision — <strong>with numbers you can defend.</strong></h1>
+    <p class="tag">Validate the data, backtest five model families, forecast with honest uncertainty, and get a recommended action — <b>every step transparent and reproducible.</b></p>
+    <div class="loop">
+      <b>Data</b><span class="arr">→</span><b>Validate</b><span class="arr">→</span><b>Explore</b><span class="arr">→</span><b>Backtest</b><span class="arr">→</span><b>Forecast</b><span class="arr">→</span><b>Explain</b><span class="arr">→</span><b>Decide</b>
+    </div>
+    <div class="cta">
+      <span class="btn-wrap"><span class="ring"></span><a href="https://github.com/tejas-parjane/forecasting-engine">◉ &nbsp;View on GitHub</a></span>
+      <span class="btn-wrap ghost"><a href="#how">Run it locally</a></span>
+      <span class="btn-wrap ghost"><a href="#charts">See real output</a></span>
+    </div>
+    <div class="hero-note">Every number below is generated by the <b>live pipeline</b> on the committed 1,095-day sample dataset — no hand-picked results.</div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v a">1,095</div><div class="l">Daily demand observations · 2021–2023</div></div>
+    <div class="kpi"><div class="v a">5</div><div class="l">Model families — baselines · statistical · ML</div></div>
+    <div class="kpi"><div class="v s">11.4%</div><div class="l">Best expanding-window sMAPE (ARIMA)</div></div>
+    <div class="kpi"><div class="v a">2</div><div class="l">Seasonalities detected (weekly · yearly)</div></div>
+    <div class="kpi"><div class="v s">74</div><div class="l">Automated tests (data → models → API)</div></div>
+    <div class="kpi"><div class="v w">100</div><div class="l">Data-quality score on the sample</div></div>
+  </div>
+
+  <h2>What it does</h2>
+  <p class="sub">Most time-series demos show a fitted line and stop. The hard parts are before and after: is the data trustworthy? Which model is actually best — <b style="color:#fff; font-weight:500">proven out-of-sample, not just tuned</b>? How confident is the forecast? And so what — what should a business do next? ForecastEngine makes that whole loop explicit, honest, and testable.</p>
+
+  <h2>The system, <strong>end to end</strong></h2>
+  <div class="card">
+    <div class="io"><div class="step">1</div><div><b>Validate</b><p>Schema, temporal-integrity, and target-quality checks produce an explicit issue list and a <b style="color:#fff;font-weight:500">Data Quality Score</b>. Nothing is silently modified — every transformation is reported.</p><small>app/data/validator.py</small></div></div>
+    <div class="io"><div class="step">2</div><div><b>Preprocess</b><p>Parse and sort dates, deduplicate timestamps, and coerce the target to numeric with a full record of actions.</p><small>app/data/preprocessing.py</small></div></div>
+    <div class="io"><div class="step">3</div><div><b>Explore</b><p>Automated EDA — statistically tested trend, <b style="color:#fff;font-weight:500">weekly + yearly seasonality</b> (period and strength), volatility trend, and anomalies.</p><small>app/analysis/eda.py · seasonality.py · anomalies.py</small></div></div>
+    <div class="io"><div class="step">4</div><div><b>Feature engineering</b><p>Calendar, lag, and rolling features with a <b style="color:#fff;font-weight:500">strict no-future-leakage</b> design (lag = 1 minimum).</p><small>app/features/engine.py</small></div></div>
+    <div class="io"><div class="step">5</div><div><b>Backtest</b><p>Expanding-window validation (4 folds) over five families — naive · seasonal naive · ETS · auto-SARIMA · XGBoost — ranked on a configurable metric; the winner is selected out-of-sample, never on a random split.</p><small>app/evaluation/backtesting.py</small></div></div>
+    <div class="io"><div class="step">6</div><div><b>Forecast + uncertainty</b><p>Retrains the winner on full history, produces horizon forecasts with <b style="color:#fff;font-weight:500">prediction intervals</b> (native when available, otherwise a documented approximation), plus expected-change direction.</p><small>app/models/ · app/forecasting/pipeline.py</small></div></div>
+    <div class="io"><div class="step">7</div><div><b>Explain &amp; decide</b><p>Driver signals (trend · seasonality · volatility), feature importance (SHAP optional), and a plain-language brief — <b style="color:#fff;font-weight:500">rule-based by default</b>, with an optional AI layer behind a feature flag. No API key required to run.</p><small>app/explainability/ · app/ai/</small></div></div>
+  </div>
+
+  <h2>Model selection — <strong>expanding-window backtest</strong><a id="charts" style="scroll-margin-top:90px;"></a></h2>
+  <p class="sub">Four chronological folds over 1,095 days, initial 60% train, ranked on sMAPE. These are the live numbers from <code>/models/evaluate</code>.</p>
+  <div class="card">
+    <table>
+      <tr><th>Rank</th><th>Model</th><th>Family</th><th>sMAPE</th><th>MAE</th><th>WAPE</th></tr>
+      <tr><td>1</td><td><b>ARIMA</b></td><td>Statistical · SARIMA(1,1,2)</td><td><b>11.35%</b></td><td>126.5</td><td>11.08%</td></tr>
+      <tr><td>2</td><td>Seasonal naive</td><td>Baseline</td><td>12.29%</td><td>136.0</td><td>11.89%</td></tr>
+      <tr><td>3</td><td>XGBoost</td><td>Machine learning · recursive</td><td>12.55%</td><td>138.7</td><td>12.24%</td></tr>
+      <tr><td>4</td><td>ETS</td><td>Statistical · Holt-Winters</td><td>12.80%</td><td>136.6</td><td>12.37%</td></tr>
+      <tr><td>5</td><td>Naive</td><td>Baseline</td><td>15.96%</td><td>183.6</td><td>16.02%</td></tr>
+    </table>
+  </div>
+
+  <h2>Live output <strong>from the committed dataset</strong></h2>
+  <p class="sub">Interactive Plotly charts rendered from actual pipeline results.</p>
+  <div class="chart-grid">
+    <div class="chart-box"><iframe loading="lazy" src="charts/historical_forecast.html" title="Historical series and 14-day ARIMA forecast with 95% interval"></iframe></div>
+    <div class="chart-box"><iframe loading="lazy" src="charts/model_comparison.html" title="Backtest error by model"></iframe></div>
+  </div>
+
+  <div class="callout">
+    <b>Live decision-brief highlight:</b> the selected ARIMA forecast expects demand to <b>decrease ≈ −2.6%</b> over the next 7 periods.
+    The brief then translates this into an action: <b>"plan a conservative restocking and cost-tightening posture; prefer the lower-middle of the
+    plausible band (≈1,080–1,435) unless additional confirming signals appear."</b> The whole brief is generated by a deterministic rule-based
+    engine (no LLM, no credentials) and clearly marked <code>generated_by: rule-based</code>.
+  </div>
+
+  <h2 id="how">Run the full system <strong>yourself</strong></h2>
+  <div class="card">
+    <p style="margin-bottom:14px; color:var(--text-2); font-weight:300">Everything ships in the repo — the sample dataset is committed, <b style="color:#fff;font-weight:500">no secret keys or external services needed</b>; the AI decision layer is off by default.</p>
+    <table>
+      <tr><th>Step</th><th>Command</th></tr>
+      <tr><td>Clone</td><td><code>git clone https://github.com/tejas-parjane/forecasting-engine.git</code></td></tr>
+      <tr><td>Install</td><td><code>pip install -r requirements.txt</code></td></tr>
+      <tr><td>API</td><td><code>uvicorn app.main:app --host 127.0.0.1 --port 8000</code> → <code>http://127.0.0.1:8000/docs</code></td></tr>
+      <tr><td>Dashboard</td><td><code>streamlit run dashboard/app.py</code> → open <code>http://localhost:8501</code></td></tr>
+      <tr><td>Tests</td><td><code>pytest</code> → <b>74 passed</b></td></tr>
+      <tr><td>Docker</td><td><code>docker-compose up --build</code></td></tr>
+    </table>
+  </div>
+
+  <h2>Project <strong>structure</strong></h2>
+  <div class="card"><div class="muted-box">
+forecasting-engine/
+├─ app/
+│  ├─ api/            FastAPI routes · schemas · in-memory store
+│  ├─ data/           loader · validator · preprocessing · sample generator
+│  ├─ analysis/       automated EDA · seasonality · anomalies
+│  ├─ features/       calendar / lag / rolling features (no leakage)
+│  ├─ models/         base · naive · ETS · ARIMA · XGBoost · registry
+│  ├─ evaluation/     metrics · expanding-window backtesting
+│  ├─ forecasting/    orchestration pipeline · uncertainty helpers
+│  ├─ explainability/ drivers · feature importance · SHAP
+│  ├─ ai/             decision brief (rule-based default · LLM opt-in)
+│  └─ main.py         FastAPI app
+├─ dashboard/app.py   Streamlit dashboard
+├─ data/sample/       committed 1,095-day sample dataset
+├─ tests/             74 unit + integration tests
+├─ docs/              this showcase
+├─ Dockerfile · docker-compose.yml · render.yaml
+└─ notebooks/         reproducibility walkthrough
+  </div></div>
+
+  <h2>Honest <strong>limitations</strong></h2>
+  <div class="card">
+    <p class="sub" style="margin-bottom:10px">A portfolio demonstration, and I'm upfront about it:</p>
+    <ul style="color:var(--text-2); padding-left:20px; line-height:2; font-weight:300">
+      <li><b style="color:#fff;font-weight:500">Synthetic data</b> — the sample is generated from a business-demand model (seed 42); real CSV/XLSX can be uploaded through the API or dashboard without code changes.</li>
+      <li><b style="color:#fff;font-weight:500">Forecasts are probabilistic expectations, not causation</b> — driver signals describe statistical association only; no causal analysis is performed.</li>
+      <li><b style="color:#fff;font-weight:500">Recursive long-horizon forecasting compounds error</b> — for XGBoost the horizon is built step-by-step; intervals for models without native uncertainty are documented approximations.</li>
+      <li><b style="color:#fff;font-weight:500">Classic ML only</b> — no deep learning or foundation-model forecasting; deliberately fast and interpretable.</li>
+      <li><b style="color:#fff;font-weight:500">AI layer is opt-in</b> — requires <code>AI_ENABLED=true</code> + <code>OPENAI_API_KEY</code>; otherwise the fully deterministic rule-based engine is used.</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    ForecastEngine · Built with Python · pandas · statsmodels · XGBoost · SHAP · FastAPI · Streamlit · Plotly<br>
+    <a href="https://github.com/tejas-parjane/forecasting-engine">github.com/tejas-parjane/forecasting-engine</a>
+  </div>
+</div>
+</body>
+</html>
