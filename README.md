@@ -1,4 +1,7 @@
-# AI-Powered Forecasting & Decision Intelligence Engine
+# Forecasting Engine — Time-Series Forecasting & Decision Intelligence
+
+> **Independent Data Science project** (self-directed, synthetic + upload-your-CSV time-series data). Not a client engagement.
+> Recruiter quick read: data validation → EDA → expanding-window backtesting (no random splits) → Naive / ETS / ARIMA / XGBoost ranked by sMAPE → forecast with uncertainty → explain → recommend via FastAPI + Streamlit.
 
 > **Historical data → Forecast → Evaluate → Explain → Recommend**
 
