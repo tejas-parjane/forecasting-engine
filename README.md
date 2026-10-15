@@ -310,6 +310,31 @@ These guarantees are enforced by tests in `tests/test_features.py` and
 The metric used to rank models is configurable (default **sMAPE**). The model
 comparison table reports all metrics with notes rather than one number.
 
+### Measured backtest results (sample data)
+
+Reproduce with `python scripts/run_backtest.py` (results saved to
+`results/backtest_sample.json`; full per-fold tables, residual diagnostics,
+and honest discussion in `docs/evaluation_results.md`).
+
+Setup: 1,095 daily rows (2021–2023, seed 42), 30-day horizon, 4
+expanding-window folds from 60% train, sMAPE selection.
+
+| Rank | Model | sMAPE | MAE | RMSE |
+|------|-------|------:|----:|-----:|
+| 1 | ARIMA | 11.35 | 126.5 | 152.0 |
+| 2 | Seasonal Naive | 12.29 | 136.0 | 163.2 |
+| 3 | XGBoost | 12.55 | 138.7 | 168.9 |
+| 4 | ETS | 12.80 | 136.6 | 162.9 |
+| 5 | Naive | 15.96 | 183.6 | 214.0 |
+
+ARIMA beats the seasonal-naive baseline by ~0.9pp — the improvement over
+baselines is the result, not the isolated 11.35%. No model wins every
+fold (seasonal-naive takes F2, ETS collapses in F3), which is why the
+expanding-window aggregate, not a single split, selects the winner.
+Winner residuals are unbiased (mean 1.35, DW 1.97) but not white noise
+(Ljung-Box p≈0) with heavy tails from injected anomalies (kurtosis 14) —
+intervals are optimistic in anomaly weeks.
+
 ---
 
 ## Uncertainty

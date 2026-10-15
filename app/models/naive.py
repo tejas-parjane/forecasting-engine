@@ -18,21 +18,29 @@ class NaiveForecaster(BaseForecaster):
     def __init__(self):
         super().__init__()
         self.last_value_: float | None = None
+        self.resid_std_: float = 0.0
 
     def fit(self, series: pd.Series, **kwargs: Any) -> "NaiveForecaster":
         self.last_value_ = float(series.iloc[-1])
+        # In-sample one-step errors for an approximate 95% interval
+        # (same sqrt-horizon convention as the ETS/XGBoost bands).
+        diffs = np.diff(np.asarray(series, dtype=float))
+        self.resid_std_ = float(np.std(diffs)) if len(diffs) > 1 else 0.0
         return self
 
     def predict(self, horizon: int, **kwargs: Any) -> ForecastResult:
         if self.last_value_ is None:
             raise RuntimeError("Model not fitted")
         fc = np.full(horizon, self.last_value_)
+        scale = np.sqrt(np.arange(1, horizon + 1))
         return ForecastResult(
             model_name=self.name,
             horizon=horizon,
             forecast=fc,
+            lower=fc - 1.96 * self.resid_std_ * scale,
+            upper=fc + 1.96 * self.resid_std_ * scale,
             method="last observed value",
-            metadata={"last_value": self.last_value_},
+            metadata={"last_value": self.last_value_, "interval": "approx gaussian (in-sample one-step std)"},
         )
 
 
@@ -49,9 +57,15 @@ class SeasonalNaiveForecaster(BaseForecaster):
         super().__init__()
         self.season_length = season_length
         self.series_: pd.Series | None = None
+        self.resid_std_: float = 0.0
 
     def fit(self, series: pd.Series, **kwargs: Any) -> "SeasonalNaiveForecaster":
         self.series_ = series
+        # In-sample seasonal one-step errors for an approximate 95% interval.
+        s = np.asarray(series, dtype=float)
+        if len(s) > self.season_length:
+            errs = s[self.season_length:] - s[:-self.season_length]
+            self.resid_std_ = float(np.std(errs)) if len(errs) > 1 else 0.0
         return self
 
     def predict(self, horizon: int, **kwargs: Any) -> ForecastResult:
@@ -75,6 +89,8 @@ class SeasonalNaiveForecaster(BaseForecaster):
             model_name=self.name,
             horizon=horizon,
             forecast=fc,
+            lower=fc - 1.96 * self.resid_std_ * np.sqrt(np.arange(1, horizon + 1)),
+            upper=fc + 1.96 * self.resid_std_ * np.sqrt(np.arange(1, horizon + 1)),
             method=method,
-            metadata={"season_length": self.season_length},
+            metadata={"season_length": self.season_length, "interval": "approx gaussian (in-sample seasonal one-step std)"},
         )
