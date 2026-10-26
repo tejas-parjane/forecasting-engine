@@ -12,6 +12,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from app.features.time_features import future_dates
 from app.analysis.eda import EDAAnalyzer
 from app.data.validator import DataValidator
 from app.evaluation.backtesting import Backtester
@@ -149,11 +150,8 @@ class ForecastingPipeline:
 
 
 def _future_dates(last_date: pd.Timestamp, horizon: int, freq: str) -> list[str]:
-    freq_map = {"D": "D", "W": "W", "MS": "MS", "M": "MS", "QS": "QS", "Q": "QS", "YS": "YS", "A": "YS", "Y": "YS"}
-    f = freq_map.get(freq, "D")
     try:
-        future = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=horizon, freq=f)
-        return [str(d.date()) for d in future]
+        return [str(d.date()) for d in future_dates(last_date, horizon, freq)]
     except Exception:
         return [str((last_date + pd.Timedelta(days=i + 1)).date()) for i in range(horizon)]
 
