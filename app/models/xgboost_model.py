@@ -9,6 +9,7 @@ import pandas as pd
 
 from app.data.validator import detect_frequency
 from app.features.time_features import calendar_features, default_lags, lag_features, rolling_features
+from app.features.time_features import future_dates as future_dates_for
 from app.models.base import BaseForecaster, ForecastResult
 
 
@@ -123,11 +124,7 @@ class XGBoostForecaster(BaseForecaster):
         # in time, so they are used to predict the NEXT future step. This is the
         # standard recursive construction and leaks nothing about the future.
         hist = pd.DataFrame({"date": self.series_.index, "target": self.series_.values})
-        future_dates = pd.date_range(
-            start=self.series_.index[-1] + pd.Timedelta(days=1),
-            periods=horizon,
-            freq="D",
-        )
+        future_dates = future_dates_for(self.series_.index[-1], horizon, freq)
 
         predicted: list[float] = []
         for i in range(horizon):
