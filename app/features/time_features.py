@@ -180,3 +180,21 @@ def create_recursive_features(
 
     frame = pd.DataFrame({"date": future_dates})
     return calendar_features(frame, "date")
+
+
+_FREQ_ALIASES = {"D": "D", "W": "W", "W-SUN": "W", "W-MON": "W", "MS": "MS", "M": "MS",
+                 "QS": "QS", "Q": "QS", "YS": "YS", "A": "YS", "Y": "YS"}
+
+
+def future_dates(last_date: pd.Timestamp, horizon: int, frequency: str) -> pd.DatetimeIndex:
+    """Dates of the next ``horizon`` periods after ``last_date`` for a detected frequency.
+
+    Daily (and unknown/irregular) frequencies step one day, as before. Weekly
+    steps exactly seven days from the last observation (not a fixed weekday).
+    Monthly, quarterly and yearly series step to the next period start.
+    """
+    last_date = pd.Timestamp(last_date)
+    f = _FREQ_ALIASES.get(frequency, "D")
+    if f == "W":
+        return pd.date_range(start=last_date + pd.Timedelta(days=7), periods=horizon, freq=pd.Timedelta(days=7))
+    return pd.date_range(start=last_date + pd.Timedelta(days=1), periods=horizon, freq=f)
